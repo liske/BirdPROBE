@@ -36,16 +36,24 @@ class LiveRecording(Recording):
 
             self.chunk_queue.task_done()
 
-    def start_recording(self):
+    def start_recording(self, input_device_index=None):
         self.stop_recording()
 
         self.samples_worker = Thread(target=self.sample_worker, daemon=True).start()
+
+        if input_device_index is None:
+            input_device_info = self.pyaudio.get_default_input_device_info()
+        else:
+            input_device_info = self.pyaudio.get_device_info_by_index(input_device_index)
+
+        print("Using input device '{}'.".format(input_device_info.get('name')))
 
         self.stream = self.pyaudio.open(
             format=pyaudio.paFloat32,
             channels=1,
             rate=SAMPLE_RATE,
             input=True,
+            input_device_index=input_device_index,
             output=False,
             stream_callback=self.read_audio_callback,
             frames_per_buffer=self.frames_per_buffer
