@@ -9,7 +9,7 @@ import pyaudio
 import librosa
 
 class LiveRecording(Recording):
-    def __init__(self, pa, analyzer, sensitivity=1.0, min_conf=0.1):
+    def __init__(self, pa, sensitivity=1.0, min_conf=0.1):
         super().__init__(Analyzer(), '/', sensitivity=1.0, min_conf=0.1)
 
         self.pyaudio = pa
