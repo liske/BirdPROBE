@@ -1,6 +1,7 @@
 from setuptools import setup, find_packages
 from datetime import date
-
+from packaging import version as packaging_version
+from platform import python_version
 
 def readme():
     with open("README.md") as f:
@@ -18,12 +19,19 @@ def version():
 def install_requires():
     requires = [
         "birdnetlib>=0.5.1",
-        "tflite-runtime>=2.12.0",
         "librosa",
         "resampy",
         "pyaudio"
     ]
 
+    # Python 3.11 wheels for tflite-runtime are not available, yet:
+    #   https://github.com/tensorflow/tensorflow/issues/60115
+    #
+    # Use tensorflow as a fallback.
+    if packaging_version.parse(python_version()) >= packaging_version.parse("3.11"):
+        requires += ["tensoflow"]
+    else:
+        requires += ["tflite-runtime>=2.12.0"]
     return requires
 
 
@@ -42,11 +50,15 @@ setup(
     extras_require={
         'gps': [
             'gps'
+        ],
+        'pixelring': [
+            'pixel_ring'
         ]
     },
     entry_points={
         "console_scripts": [
-            "birdprobe-detector = birdprobe.birdnet:main"
+            "birdprobe-detector = birdprobe.birdnet:main",
+            "birdprobe-location = birdprobe.location:main",
         ]
     },
 )

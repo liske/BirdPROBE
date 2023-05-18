@@ -3,6 +3,7 @@ from birdnetlib.analyzer import Analyzer
 from birdnetlib.main import SAMPLE_RATE
 import queue
 from threading import Thread
+import json
 import numpy as np
 import operator
 import pyaudio
@@ -27,12 +28,16 @@ class LiveRecording(Recording):
             # Assign scores to labels
             p_labels = dict(zip(self.analyzer.labels, pred))
 
+            # Filter for min_conf score
+            p_filtered = [x for x in p_labels.items() if x[1] > self.minimum_confidence]
+
             # Sort by score
             p_sorted = sorted(
-                p_labels.items(), key=operator.itemgetter(1), reverse=True
+                p_filtered, key=operator.itemgetter(1), reverse=True
             )
 
-            print([x for x in p_sorted if x[1] > self.minimum_confidence])
+            if p_sorted:
+                print(json.dumps(p_sorted, default=str))
 
             self.chunk_queue.task_done()
 
