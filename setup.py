@@ -53,12 +53,16 @@ setup(
         ],
         'pixelring': [
             'pixel_ring'
+        ],
+        'ws-epd': [
+            'waveshare-epaper',
         ]
     },
     entry_points={
         "console_scripts": [
             "birdprobe-detector = birdprobe.birdnet:main",
             "birdprobe-location = birdprobe.location:main",
+            "birdprobe-display = birdprobe.display:main",
         ]
     },
 )

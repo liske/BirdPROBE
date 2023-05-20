@@ -77,3 +77,15 @@ topic_detection=BirdPROBE/detection/{hostname}/{birdnet_input}/{birdnet_label}
 
 # birdnetlib: labels file to use (default: build-in)
 #labels_file=labels_de.txt
+
+
+[birdprobe.display.epaper1]
+# -=] Waveshare-e-paper display example. [=-
+
+# Display device class:
+#   ws_epd: Waveshare e-paper
+class=ws_epd
+
+# Display module, see also:
+#  https://github.com/yskoht/waveshare-epaper
+module=epd2in7
