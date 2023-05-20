@@ -29,7 +29,7 @@ def install_requires():
     #
     # Use tensorflow as a fallback.
     if packaging_version.parse(python_version()) >= packaging_version.parse("3.11"):
-        requires += ["tensoflow"]
+        requires += ["tensorflow"]
     else:
         requires += ["tflite-runtime>=2.12.0"]
     return requires
