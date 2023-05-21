@@ -8,9 +8,17 @@ from threading import Event
 class AbstractProvider():
     def __init__(self, birdprobe):
         self.birdprobe = birdprobe
+        self.location = None
 
-    def publish(self, location=None):
-        print(location)
+    def publish(self):
+        self.birdprobe.mqtt_client.publish(
+            self.birdprobe.config['topic_location'],
+            json.dumps(self.location),
+            retain=True)
+        print("Location: {}".format(self.location))
+
+    def mqtt_on_connect(self, client, userdata, flags, rc):
+        self.publish()
 
     def run(self):
         self.publish()
