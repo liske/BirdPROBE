@@ -13,8 +13,8 @@ class AbstractDisplay():
         Event().wait()
 
 class Display(BirdPROBE):
-    def init(self, parser):
-        parser.add_argument('name', help='config file section name suffix to be used ([birdprobe.display.$name])')
+    def init(self, argparser, configparser):
+        argparser.add_argument('name', help='config file section name suffix to be used ([birdprobe.display.$name])')
 
     def start(self):
         display_config = self.configparser["{}.{}".format(self.component, self.args.name)]

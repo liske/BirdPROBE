@@ -3,11 +3,11 @@
 # Some settings will replace the following well-known placeholders
 # with their appropriate values:
 #
-# {hostname}      - $(hostname)
-# {fqdn}          - $(hostname)
-# {component}     - name of the BirdPROBE component (location, birdnet, ...)
-# {birdnet_input} - audio input device index used by birdnet
-# {birdnet_label} - detected birdnet label
+# ${hostname}      - $(hostname)
+# ${fqdn}          - $(hostname)
+# ${component}     - name of the BirdPROBE component (location, birdnet, ...)
+# ${birdnet_input} - audio input device index used by birdnet
+# ${birdnet_label} - detected birdnet label
 
 [DEFAULT]
 # -=] Settings used by all components. [=-
@@ -15,8 +15,8 @@
 
 # -- MQTT broker settings (paho-mqtt) --
 
-# MQTT unique client id string (default: {hostname}_{component})
-#mqtt_client_id="{hostname}_{component}"
+# MQTT unique client id string (default: ${hostname}_${component})
+#mqtt_client_id="${fqdn}_${component}"
 
 # MQTT protocol version (default: MQTTv311)
 #mqtt_protocol=MQTTv311
@@ -27,11 +27,17 @@
 
 # -- MQTT topic settings --
 
+# Topic prefix
+#topic_prefix=BirdPROBE
+
+# Topic for component status
+#topic_component=${topic_prefix}/component/${hostname}/${component}
+
 # Topic for location reports
-topic_location=BirdPROBE/location/{hostname}
+#topic_location=${topic_prefix}/location/${hostname}
 
 # Topic for birdnet detections
-topic_detection=BirdPROBE/detection/{hostname}/{birdnet_input}/{birdnet_label}
+#topic_detection=${topic_prefix}/detection/${hostname}/${birdnet_label}
 
 
 [birdprobe.location]
@@ -66,6 +72,9 @@ topic_detection=BirdPROBE/detection/{hostname}/{birdnet_input}/{birdnet_label}
 # Device index of the audio input device. The default input device will be
 # used if `input_device_index` is not configured (default).
 #input_device_index=
+
+# birdnetlib: recording sample rate (default: 48000)
+#sample_rate=48000
 
 # birdnetlib: detection sensitivity; higher values result in higher
 # sensitivity; values in [0.5, 1.5]; defaults to 1.0

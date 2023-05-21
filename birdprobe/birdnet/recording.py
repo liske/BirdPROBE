@@ -1,21 +1,21 @@
 from birdnetlib import Recording
 from birdnetlib.analyzer import Analyzer
-from birdnetlib.main import SAMPLE_RATE
 import queue
 from threading import Thread
-import json
 import numpy as np
 import operator
 import pyaudio
 import librosa
 
 class LiveRecording(Recording):
-    def __init__(self, pa, sensitivity=1.0, min_conf=0.1):
+    def __init__(self, pa, callback, sample_rate, sensitivity=1.0, min_conf=0.1):
         super().__init__(Analyzer(), '/', sensitivity=1.0, min_conf=0.1)
 
         self.pyaudio = pa
+        self.callback = callback
+        self.sample_rate = sample_rate
         self.stream = None
-        self.frames_per_buffer = librosa.frames_to_samples(librosa.time_to_frames(3, sr=SAMPLE_RATE))
+        self.frames_per_buffer = librosa.frames_to_samples(librosa.time_to_frames(3, sr=self.sample_rate))
         self.chunk_queue = queue.Queue(5)
         self.samples_worker = None
 
@@ -37,7 +37,7 @@ class LiveRecording(Recording):
             )
 
             if p_sorted:
-                print(json.dumps(p_sorted, default=str))
+                self.callback(p_sorted)
 
             self.chunk_queue.task_done()
 
@@ -56,7 +56,7 @@ class LiveRecording(Recording):
         self.stream = self.pyaudio.open(
             format=pyaudio.paFloat32,
             channels=1,
-            rate=SAMPLE_RATE,
+            rate=self.sample_rate,
             input=True,
             input_device_index=input_device_index,
             output=False,

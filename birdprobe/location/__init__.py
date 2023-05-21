@@ -18,8 +18,8 @@ class AbstractProvider():
         Event().wait()
 
 class Location(BirdPROBE):
-    def start_provider(self):
-        provider_name = self.configparser[self.component].get('provider', 'none')
+    def main(self):
+        provider_name = self.config.get('provider', 'none')
         if not '.' in provider_name:
             provider_name = '{}.{}'.format(self.component, provider_name)
         provider = importlib.import_module(provider_name)
@@ -27,7 +27,7 @@ class Location(BirdPROBE):
 
 def main():
     location = Location(__package__, 'location provider')
-    location.start_provider()
+    location.start()
 
 if __name__ == "__main__":
     main()
