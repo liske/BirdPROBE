@@ -60,10 +60,10 @@ class BirdPROBE():
     def mqtt_on_connect(self, client, userdata, flags, rc):
         pass
 
-    def _on_message(self, client, userdata, flags, rc):
-        self.mqtt_on_message(client, userdata, flags, rc)
+    def _on_message(self, client, userdata, message):
+        self.mqtt_on_message(client, userdata, message)
 
-    def mqtt_on_message(self, client, userdata, flags, rc):
+    def mqtt_on_message(self, client, userdata, message):
         pass
 
     def init(self, argparser, configparser):
