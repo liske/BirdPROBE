@@ -33,6 +33,19 @@ class Location(BirdPROBE):
         provider = importlib.import_module(provider_name)
         provider.run(self)
 
+def location_decode(message):
+    try:
+        location = json.loads(message.payload)
+    except json.JSONDecodeError:
+        return None
+
+    if location is not None:
+        for key in ['lat', 'lon']:
+            if not key in location or not isinstance(location[key], float):
+                return None
+
+    return location
+
 def main():
     location = Location(__package__, 'location provider')
     location.start()

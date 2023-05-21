@@ -1,5 +1,6 @@
 from birdnetlib import Recording
 from birdnetlib.analyzer import Analyzer
+from datetime import datetime
 import queue
 from threading import Thread
 import numpy as np
@@ -8,7 +9,7 @@ import pyaudio
 import librosa
 
 class LiveRecording(Recording):
-    def __init__(self, pa, callback, sample_rate, sensitivity=1.0, min_conf=0.1):
+    def __init__(self, pa, callback, location, sample_rate, sensitivity=1.0, min_conf=0.1):
         super().__init__(Analyzer(), '/', sensitivity=1.0, min_conf=0.1)
 
         self.pyaudio = pa
@@ -18,11 +19,20 @@ class LiveRecording(Recording):
         self.frames_per_buffer = librosa.frames_to_samples(librosa.time_to_frames(3, sr=self.sample_rate))
         self.chunk_queue = queue.Queue(5)
         self.samples_worker = None
+        self.location_update(location)
+
+    def location_update(self, location):
+        if location:
+            self.lat = location['lat']
+            self.lon = location['lon']
+
+            self.analyzer.set_predicted_species_list_from_position(self)
 
     def sample_worker(self):
         while True:
             chunk = self.chunk_queue.get()
 
+            self.date = datetime.now()
             pred = self.analyzer.predict(chunk)[0]
 
             # Assign scores to labels

@@ -3,6 +3,7 @@
 from birdnetlib.main import SAMPLE_RATE
 from birdprobe import BirdPROBE
 from birdprobe.birdnet.recording import LiveRecording
+from birdprobe.location import location_decode
 from datetime import datetime
 import json
 import numpy as np
@@ -23,6 +24,8 @@ class Birdnet(BirdPROBE):
             'sensitivity': 1.0,
             'min_conf': 0.1,
         }
+        self.lr = None
+        self.location = None
 
     def detection(self, detections):
         for detection in detections:
@@ -31,6 +34,7 @@ class Birdnet(BirdPROBE):
                 'label': labels[0],
                 'label2': labels[1],
                 'conf': detection[1],
+                'loc': self.location,
                 'time': datetime.now().isoformat(),
             }
             msg = json.dumps(data, cls=NumpyEncoder)
@@ -40,15 +44,26 @@ class Birdnet(BirdPROBE):
             print(msg)
             self.mqtt_client.publish(self.config['topic_detection'], msg)
 
+    def location_update(self,client, userdata, message):
+        self.location = location_decode(message)
+
+        if self.lr:
+            self.lr.location_update(self.location)
+
+    def mqtt_on_connect(self, client, userdata, flags, rc):
+        client.message_callback_add(self.config['topic_location'], self.location_update)
+        client.subscribe(self.config['topic_location'])
+
     def main(self):
         pa = pyaudio.PyAudio()
-        lr = LiveRecording(
+        self.lr = LiveRecording(
             pa=pa, 
             callback=self.detection,
+            location=self.location,
             sample_rate=self.configparser[self.component].getint('sample_rate'),
             sensitivity=self.configparser[self.component].getfloat('sensitivity'),
             min_conf=self.configparser[self.component].getfloat('min_conf'))
-        lr.start_recording()
+        self.lr.start_recording()
 
         while True:
             Event().wait()
