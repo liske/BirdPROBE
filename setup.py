@@ -21,7 +21,8 @@ def install_requires():
         "birdnetlib>=0.5.1",
         "librosa",
         "resampy",
-        "pyaudio"
+        "pyaudio",
+        "paho-mqtt",
     ]
 
     # Python 3.11 wheels for tflite-runtime are not available, yet:
