@@ -50,7 +50,7 @@ setup(
     install_requires=install_requires(),
     extras_require={
         'gps': [
-            'gps'
+            'gpsd-py3'
         ],
         'pixelring': [
             'pixel_ring'
