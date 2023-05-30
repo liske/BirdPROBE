@@ -20,7 +20,8 @@ class LiveRecording(Recording):
         self.callback = callback
         self.sample_rate = sample_rate
         self.stream = None
-        self.frames_per_buffer = librosa.frames_to_samples(librosa.time_to_frames(3, sr=self.sample_rate))
+        # assume a 5s chunking from pyaudio, decreased by the overlap which is taken from the previous chunk
+        self.frames_per_buffer = librosa.frames_to_samples(librosa.time_to_frames(5 - overlap, sr=self.sample_rate))
         self.chunk_queue = queue.Queue(5)
         self.samples_worker = None
         self.location_update(location)
