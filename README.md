@@ -21,7 +21,7 @@ This is project is in WIP and not ready to use, yet.
 
 You need a MQTT broker. You can use a local *mosquitto*:
 
-´´´console
+```console
 # apt-get install mosquitto mosquitto-clients
 ```
 
