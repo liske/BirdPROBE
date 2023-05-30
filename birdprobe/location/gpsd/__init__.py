@@ -10,23 +10,24 @@ class GpsdProvider(AbstractProvider):
             host=birdprobe.config.get('gpsd_host', '127.0.0.1'),
             port=birdprobe.config.getint('gpsd_port', 2947))
 
+        self.sleep_duration = birdprobe.config.getfloat('gpsd_sleep', 30)
+
     def run(self):
 
         while True:
             packet = gpsd.get_current()
             try:
                 position = packet.position()
+
+                self.location = {
+                    'lat': position[0],
+                    'lon': position[1],
+                }
+                self.publish()
             except gpsd.NoFixError:
-                sleep(20)
-                continue
+                pass
 
-            self.location = {
-                'lat': position[0],
-                'lon': position[1],
-            }
-            self.publish()
-
-            sleep(60)
+            sleep(self.sleep_duration)
 
 def run(birdprobe):
     provider = GpsdProvider(birdprobe)

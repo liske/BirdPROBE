@@ -65,6 +65,9 @@
 #gpsd_host=127.0.0.1
 #gpsd_port=2947
 
+# gpsd sleep interval between getting fixes (seconds)
+#gpsd_sleep=30
+
 
 [birdprobe.birdnet]
 # -=] Birdnetlib recording and detection settings. [=-
