@@ -90,6 +90,8 @@
 # birdnetlib: labels file to use (default: build-in)
 #labels_path=labels_de.txt
 
+# birdnetlib: detection overlap (seconds; default: 1.0)
+#overlap=1.0
 
 [birdprobe.display.epaper1]
 # -=] Waveshare-e-paper display example. [=-

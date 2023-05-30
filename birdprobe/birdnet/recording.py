@@ -9,7 +9,7 @@ import pyaudio
 import librosa
 
 class LiveRecording(Recording):
-    def __init__(self, pa, callback, location, sample_rate, sensitivity=1.0, min_conf=0.1, labels_path=None, mobel_path=None):
+    def __init__(self, pa, callback, location, sample_rate, overlap=1.0, sensitivity=1.0, min_conf=0.1, labels_path=None, mobel_path=None):
         analyzer = Analyzer(
             classifier_labels_path=labels_path,
             classifier_model_path=mobel_path)
@@ -23,6 +23,8 @@ class LiveRecording(Recording):
         self.chunk_queue = queue.Queue(5)
         self.samples_worker = None
         self.location_update(location)
+        self.overlap = int(overlap * sample_rate)
+        self.chunk_tail = None
 
     def location_update(self, location):
         if location:
@@ -66,6 +68,11 @@ class LiveRecording(Recording):
 
         print("Using input device '{}'.".format(input_device_info.get('name')))
 
+        if self.overlap:
+            stream_callback = self.read_audio_callback_overlap
+        else:
+            stream_callback = self.read_audio_callback
+
         self.stream = self.pyaudio.open(
             format=pyaudio.paFloat32,
             channels=1,
@@ -73,7 +80,7 @@ class LiveRecording(Recording):
             input=True,
             input_device_index=input_device_index,
             output=False,
-            stream_callback=self.read_audio_callback,
+            stream_callback=stream_callback,
             frames_per_buffer=self.frames_per_buffer
         )
 
@@ -89,6 +96,20 @@ class LiveRecording(Recording):
 
     def read_audio_callback(self, in_data, frame_count, time_info, flag):
         chunk = np.frombuffer(in_data, dtype=np.float32)
+
+        try:
+            self.chunk_queue.put_nowait(chunk)
+        except queue.Full:
+            print("analyze queue overrun :-(")
+
+        return None, pyaudio.paContinue
+
+    def read_audio_callback_overlap(self, in_data, frame_count, time_info, flag):
+        if self.chunk_tail is not None:
+            chunk = np.concatenate((self.chunk_tail, np.frombuffer(in_data, dtype=np.float32)))
+        else:
+            chunk = np.frombuffer(in_data, dtype=np.float32)
+        self.chunk_tail = chunk[-self.overlap:]
 
         try:
             self.chunk_queue.put_nowait(chunk)
