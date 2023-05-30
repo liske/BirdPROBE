@@ -25,6 +25,8 @@ You need a MQTT broker. You can use a local *mosquitto*:
 # apt-get install mosquitto mosquitto-clients
 ```
 
+### Install
+
 Clone this repository:
 
 ```console
@@ -52,6 +54,29 @@ You can add optional features:
 ```console
 $ pip install -e '.[gps,ws-epd]'
 ```
+
+### Run
+
+The components provide appropriate commands in the virtualenv to start them.
+
+Run the detection component:
+
+```console
+$ birdprobe-detector -c /path/to/config.ini
+```
+
+Run the location provider:
+
+```console
+$ birdprobe-location -c /path/to/config.ini
+```
+
+Monitor MQTT messages:
+
+```console
+$ mosquitto_sub -v -t 'BirdPROBE/#'
+```
+
 
 ## TODO
 - provide some packaging
