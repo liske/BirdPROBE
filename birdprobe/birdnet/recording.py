@@ -1,5 +1,6 @@
 from birdnetlib import Recording
 from birdnetlib.analyzer import Analyzer
+from birdnetlib.utils import return_week_48_from_datetime
 from datetime import datetime
 import queue
 from threading import Thread
@@ -37,7 +38,7 @@ class LiveRecording(Recording):
         while True:
             chunk = self.chunk_queue.get()
 
-            self.date = datetime.now()
+            self.week_48 = return_week_48_from_datetime(datetime.now())
             pred = self.analyzer.predict(chunk)[0]
 
             # Assign scores to labels
