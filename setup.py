@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 from datetime import date
-from packaging import version as packaging_version
+from pkg_resources import packaging
 from platform import python_version
 
 def readme():
@@ -29,7 +29,7 @@ def install_requires():
     #   https://github.com/tensorflow/tensorflow/issues/60115
     #
     # Use tensorflow as a fallback.
-    if packaging_version.parse(python_version()) >= packaging_version.parse("3.11"):
+    if packaging.version.parse(python_version()) >= packaging.version.parse("3.11"):
         requires += ["tensorflow"]
     else:
         requires += ["tflite-runtime>=2.12.0"]
