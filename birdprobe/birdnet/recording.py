@@ -9,8 +9,11 @@ import pyaudio
 import librosa
 
 class LiveRecording(Recording):
-    def __init__(self, pa, callback, location, sample_rate, sensitivity=1.0, min_conf=0.1):
-        super().__init__(Analyzer(), '/', sensitivity=1.0, min_conf=0.1)
+    def __init__(self, pa, callback, location, sample_rate, sensitivity=1.0, min_conf=0.1, labels_path=None, mobel_path=None):
+        analyzer = Analyzer(
+            classifier_labels_path=labels_path,
+            classifier_model_path=mobel_path)
+        super().__init__(analyzer, '/', sensitivity=1.0, min_conf=0.1)
 
         self.pyaudio = pa
         self.callback = callback

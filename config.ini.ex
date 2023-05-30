@@ -88,7 +88,7 @@
 #min_conf=0.1
 
 # birdnetlib: labels file to use (default: build-in)
-#labels_file=labels_de.txt
+#labels_path=labels_de.txt
 
 
 [birdprobe.display.epaper1]

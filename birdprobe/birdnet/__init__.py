@@ -56,8 +56,10 @@ class Birdnet(BirdPROBE):
 
     def main(self):
         pa = pyaudio.PyAudio()
+        labels_path = self.config.get('labels_path')
         self.lr = LiveRecording(
-            pa=pa, 
+            pa=pa,
+            labels_path=labels_path,
             callback=self.detection,
             location=self.location,
             sample_rate=self.configparser[self.component].getint('sample_rate'),
