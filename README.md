@@ -27,7 +27,13 @@ You need a MQTT broker. You can use a local *mosquitto*:
 
 ### Install
 
-Clone this repository:
+Install external dependencies for *birdnetlib* and *pyaudio* python packages:
+
+```console
+# apt-get install ffmpeg virtualenv portaudio19-dev
+```
+
+Clone this repository locally:
 
 ```console
 $ git clone https://codeberg.org/liske/BirdPROBE.git
