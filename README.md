@@ -9,7 +9,10 @@ BirdPROBE consists of several components loosley connected through a MQTT broker
 - `birdprobe-detection` - records audio and does detection based on *BirdNET*, publishes it's detections via MQTT
 - `birdprobe-display` - displays detections and status informations via external displays by listening to MQTT events
 - `birdprobe-location` - publishes location information via MQTT from different providers (`none`, `static`, `gpsd`)
-- `birdprobe-record` - records detection events *TBD*
+- `birdprobe-record` - records detection events *TODO*
+
+All components can run on a single host. They also can run distributed or you could run multiple instances.
+By default the MQTT topics contains the `$(hostname)` string to distinguish component instances per node.
 
 ## Status
 
@@ -87,6 +90,7 @@ $ mosquitto_sub -v -t 'BirdPROBE/#'
 ## TODO
 - provide some packaging
 - finish components
+- logging
 - more optimization for low power setups
   - use some binary rather than JSON message format
   - update prediction only if location has significant changes
