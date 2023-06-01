@@ -62,8 +62,9 @@ setup(
     entry_points={
         "console_scripts": [
             "birdprobe-detector = birdprobe.birdnet:main",
-            "birdprobe-location = birdprobe.location:main",
             "birdprobe-display = birdprobe.display:main",
+            "birdprobe-location = birdprobe.location:main",
+            "birdprobe-sysclock = birdprobe.sysclock:main",
         ]
     },
 )

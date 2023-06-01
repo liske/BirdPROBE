@@ -10,6 +10,7 @@ BirdPROBE consists of several components loosley connected through a MQTT broker
 - `birdprobe-display` - displays detections and status informations via external displays by listening to MQTT events
 - `birdprobe-location` - publishes location information via MQTT from different providers (`none`, `static`, `gpsd`)
 - `birdprobe-record` - records detection events *TODO*
+- `birdprobe-sysclock` - approximate system time from gpsd for budget gps dongles (for SBCs w/o RTC like *Raspberry Pi*)
 
 All components can run on a single host. They also can run distributed or you could run multiple instances.
 By default the MQTT topics contains the `$(hostname)` string to distinguish component instances per node.

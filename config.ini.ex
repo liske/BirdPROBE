@@ -93,6 +93,7 @@
 # birdnetlib: detection overlap (seconds; default: 1.0)
 #overlap=1.0
 
+
 [birdprobe.display.epaper1]
 # -=] Waveshare-e-paper display example. [=-
 
@@ -103,3 +104,11 @@ class=ws_epd
 # Display module, see also:
 #  https://github.com/yskoht/waveshare-epaper
 module=epd2in7
+
+
+[birdprobe.sysclock]
+# -=] Approximate system time from gpsd. [=-
+
+# gpsd connection parameters
+#gpsd_host=127.0.0.1
+#gpsd_port=2947
