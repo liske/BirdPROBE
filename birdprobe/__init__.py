@@ -2,6 +2,7 @@ __version__ = '0.0'
 
 import argparse
 import configparser
+import os
 import paho.mqtt.client as mqtt
 import socket
 
@@ -13,11 +14,12 @@ class BirdPROBE():
             'hostname': socket.gethostname(),
             'fqdn': socket.getfqdn(),
             'component': component,
+            'pid': os.getpid(),
 
             'birdnet_input': '',
 
             'mqtt_host': 'localhost',
-            'mqtt_client_id': '${fqdn}_${component}',
+            'mqtt_client_id': '${fqdn}_${component}#${pid}',
             'mqtt_transport': 'tcp',
 
             'topic_prefix': 'BirdPROBE',

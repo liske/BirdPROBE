@@ -6,6 +6,7 @@
 # ${hostname}      - $(hostname)
 # ${fqdn}          - $(hostname)
 # ${component}     - name of the BirdPROBE component (location, birdnet, ...)
+# ${pid}           - $(pid)
 # ${birdnet_input} - audio input device index used by birdnet
 # ${birdnet_label} - detected birdnet label
 
