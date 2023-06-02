@@ -32,7 +32,7 @@ class Birdnet(BirdPROBE):
             labels = detection[0].split('_')
             data = {
                 'label': labels[0],
-                'label2': labels[1],
+                'label2': self.labels_l18n.get(labels[0], labels[1]),
                 'conf': detection[1],
                 'loc': self.location,
                 'time': datetime.now().isoformat(),
@@ -55,11 +55,17 @@ class Birdnet(BirdPROBE):
         client.subscribe(self.config['topic_location'])
 
     def main(self):
-        pa = pyaudio.PyAudio()
+        self.labels_l18n = {}
         labels_path = self.config.get('labels_path')
+        if labels_path is not None:
+            with open(labels_path, 'r') as fh:
+                for line in fh:
+                    label = line.strip().split('_')
+                    self.labels_l18n[label[0]] = label[1]
+
+        pa = pyaudio.PyAudio()
         self.lr = LiveRecording(
             pa=pa,
-            labels_path=labels_path,
             callback=self.detection,
             location=self.location,
             sample_rate=self.configparser[self.component].getint('sample_rate'),
