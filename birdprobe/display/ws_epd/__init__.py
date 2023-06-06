@@ -25,15 +25,15 @@ class WaveshareEPD(AbstractGraphicDisplay):
 
         full_refresh = True
         if self.last_image is not None:
-            diff = ImageChops.difference(self.last_image, image)
-            if diff is None:
+            diff_bbox = ImageChops.difference(self.last_image, image).getbbox()
+            if diff_bbox is None:
                 # skip update if last and current image are identical
                 return
 
             if self.has_partial_updates:
-                full_refresh = (diff[2] - diff[0]) > self.display_width / 2 and (diff[3] - diff[1]) > self.display_height / 2
+                full_refresh = (diff_bbox[2] - diff_bbox[0]) > self.display_width / 2 and (diff_bbox[3] - diff_bbox[1]) > self.display_height / 2
                 if not full_refresh:
-                    self.epd.display_Partial(self.epd.getbuffer(image), *diff)
+                    self.epd.display_Partial(self.epd.getbuffer(image), *diff_bbox)
 
         self.last_image = image
 
