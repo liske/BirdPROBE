@@ -7,7 +7,9 @@ import time
 
 class WaveshareEPD(AbstractGraphicDisplay):
     def __init__(self, birdprobe, display_name, display_config):
-        self.epd = epaper.epaper('epd2in7').EPD()
+        module = display_config['module']
+        print("display module: {}".format(module))
+        self.epd = epaper.epaper(module).EPD()
         self.epd.init()
         self.epd.Clear(0xFF)
         self.epd.sleep()
