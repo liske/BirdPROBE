@@ -10,7 +10,7 @@ import socket
 logger = logging.getLogger(__name__)
 
 class BirdPROBE():
-    def __init__(self, component, description, mqtt_persist=False):
+    def __init__(self, component, description, mqtt_persist=False, mqtt_enable=True):
         self.component = component
         self.configparser = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
         self.configparser['DEFAULT'] = {
@@ -56,17 +56,19 @@ class BirdPROBE():
             self.configparser.add_section(component)
         self.config = self.configparser[component]
 
-        self.mqtt_persist = mqtt_persist
-        self.mqtt_client = mqtt.Client(
-            client_id=self.config['mqtt_client_id'],
-#            clean_session=True,
-#            userdata=None,
-            protocol=mqtt.MQTTv311,
-            transport=self.config['mqtt_transport'])
+        self.mqtt_enable = mqtt_enable
+        if self.mqtt_enable:
+            self.mqtt_persist = mqtt_persist
+            self.mqtt_client = mqtt.Client(
+                client_id=self.config['mqtt_client_id'],
+                # clean_session=True,
+                # userdata=None,
+                protocol=mqtt.MQTTv311,
+                transport=self.config['mqtt_transport'])
 
-        self.mqtt_client.on_connect = self._on_connect
-        self.mqtt_client.on_disconnect = self._on_disconnect
-        self.mqtt_client.on_message = self._on_message
+            self.mqtt_client.on_connect = self._on_connect
+            self.mqtt_client.on_disconnect = self._on_disconnect
+            self.mqtt_client.on_message = self._on_message
 
     def _on_connect(self, client, userdata, flags, rc):
         logger.info("MQTT connection has been established")
@@ -95,11 +97,12 @@ class BirdPROBE():
         pass
 
     def start(self):
-        self.mqtt_client.enable_logger()
-        self.mqtt_client.will_set(self.config['topic_component'], payload='{"active": false}', retain=True)
-        self.mqtt_client.connect(self.config['mqtt_host'])
-        self.mqtt_client.loop_start()
-        self.main()
+        if self.mqtt_enable:
+            self.mqtt_client.enable_logger()
+            self.mqtt_client.will_set(self.config['topic_component'], payload='{"active": false}', retain=True)
+            self.mqtt_client.connect(self.config['mqtt_host'])
+            self.mqtt_client.loop_start()
+            self.main()
     
     def main():
         pass

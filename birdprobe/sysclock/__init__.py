@@ -9,6 +9,9 @@ import time
 logger = logging.getLogger(__name__)
 
 class SysClock(BirdPROBE):
+    def __init__(self, component, description):
+        super().__init__(component, description, mqtt_enable=False)
+
     def init(self, argparser, configparser):
         configparser[self.component] = {
             'gpsd_host': '127.0.0.1',
