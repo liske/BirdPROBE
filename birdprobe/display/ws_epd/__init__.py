@@ -1,14 +1,17 @@
 import atexit
 from birdprobe.display import AbstractGraphicDisplay
 import epaper
+import logging
 from PIL import ImageChops
 import signal
 import time
 
+logger = logging.getLogger(__name__)
+
 class WaveshareEPD(AbstractGraphicDisplay):
     def __init__(self, birdprobe, display_name, display_config):
         module = display_config['module']
-        print("display module: {}".format(module))
+        logger.info("display module: {}".format(module))
         self.epd = epaper.epaper(module).EPD()
         self.epd.init()
         self.epd.Clear(0xFF)
@@ -16,7 +19,7 @@ class WaveshareEPD(AbstractGraphicDisplay):
         self.has_partial_updates = hasattr(self.epd, 'display_Partial') and callable(self.epd.display_Partial)
         self.last_image = None
 
-        print("Display partial update support: {}".format(self.has_partial_updates))
+        logger.info("display partial update support: {}".format(self.has_partial_updates))
 
         super().__init__(birdprobe, display_name, display_config, self.epd.width, self.epd.height)
 

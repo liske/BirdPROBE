@@ -4,10 +4,13 @@ from birdnetlib.utils import return_week_48_from_datetime
 from datetime import datetime
 import queue
 from threading import Thread
+import logging
 import numpy as np
 import operator
 import pyaudio
 import librosa
+
+logger = logging.getLogger(__name__)
 
 class LiveRecording(Recording):
     def __init__(self, pa, callback, location, sample_rate, overlap=1.0, sensitivity=1.0, min_conf=0.1, labels_path=None, mobel_path=None):
@@ -30,6 +33,7 @@ class LiveRecording(Recording):
 
     def location_update(self, location):
         if location:
+            logger.debug("got location update")
             self.lat = location['lat']
             self.lon = location['lon']
 
@@ -68,13 +72,16 @@ class LiveRecording(Recording):
         else:
             input_device_info = self.pyaudio.get_device_info_by_index(input_device_index)
 
-        print("Using input device '{}'.".format(input_device_info.get('name')))
-
+        logger.info("using input device '%s'", input_device_info.get('name'))
+ 
         if self.overlap:
+            logger.debug("overlap recording is enabled")
             stream_callback = self.read_audio_callback_overlap
         else:
+            logger.debug("overlap recording is disabled")
             stream_callback = self.read_audio_callback
 
+        logger.debug("opening pyaudio stream...")
         self.stream = self.pyaudio.open(
             format=pyaudio.paFloat32,
             channels=1,
@@ -102,7 +109,7 @@ class LiveRecording(Recording):
         try:
             self.chunk_queue.put_nowait(chunk)
         except queue.Full:
-            print("analyze queue overrun :-(")
+            logger.warning("analyze queue overrun :-(")
 
         return None, pyaudio.paContinue
 
@@ -116,6 +123,6 @@ class LiveRecording(Recording):
         try:
             self.chunk_queue.put_nowait(chunk)
         except queue.Full:
-            print("analyze queue overrun :-(")
+            logger.warning("analyze queue overrun :-(")
 
         return None, pyaudio.paContinue

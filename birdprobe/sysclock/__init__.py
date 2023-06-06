@@ -3,7 +3,10 @@
 from birdprobe import BirdPROBE
 from datetime import datetime, timedelta, timezone
 import gpsd
+import logging
 import time
+
+logger = logging.getLogger(__name__)
 
 class SysClock(BirdPROBE):
     def init(self, argparser, configparser):
@@ -25,10 +28,13 @@ class SysClock(BirdPROBE):
 
                 if abs(dt-now) >= timedelta(seconds=5):
                     time.clock_settime(time.CLOCK_REALTIME, dt.timestamp())
-                    print("Set system clock since it has deviated more than 5s from gpsd time.")
+                    logger.info("update system clock, deviated more than 5s from gpsd time")
+                else:
+                    logger.debug("system clock is correct")
 
                 time.sleep(3600)
             except gpsd.NoFixError:
+                logger.debug("no gps fix, yet")
                 time.sleep(20)
 
 def main():

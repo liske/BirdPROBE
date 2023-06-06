@@ -6,9 +6,12 @@ from birdprobe.birdnet.recording import LiveRecording
 from birdprobe.location import location_decode
 from datetime import datetime
 import json
+import logging
 import numpy as np
 import pyaudio
 from threading import Event
+
+logger = logging.getLogger(__name__)
 
 class NumpyEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -39,9 +42,10 @@ class Birdnet(BirdPROBE):
             }
             msg = json.dumps(data, cls=NumpyEncoder)
 
+            logger.debug("new detection of %s", msg)
+
             self.config['birdnet_label'] = labels[0]
             self.config['birdnet_label2'] = labels[1]
-            print(msg)
             self.mqtt_client.publish(self.config['topic_detection'], msg)
 
     def location_update(self,client, userdata, message):
@@ -58,10 +62,13 @@ class Birdnet(BirdPROBE):
         self.labels_l18n = {}
         labels_path = self.config.get('labels_path')
         if labels_path is not None:
+            logger.debug("loading custom labels from %s", labels_path)
             with open(labels_path, 'r') as fh:
                 for line in fh:
                     label = line.strip().split('_')
                     self.labels_l18n[label[0]] = label[1]
+
+        logger.debug("starting live recording...")
 
         pa = pyaudio.PyAudio()
         self.lr = LiveRecording(
